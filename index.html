@@ -1,249 +1,856 @@
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BelajarBareng - Kaya Pelajarin.ai + AI</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<style>
-*{box-sizing:border-box}body{font-family:Arial;margin:0;background:#fff;color:#111}
-button{cursor:pointer}.hidden{display:none!important}
-.top{background:#ff6b00;color:#fff;text-align:center;padding:8px;font-size:13px}
-.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 28px}
-.btnO{background:#ff6b00;color:#fff;border:0;padding:10px 18px;border-radius:999px;font-weight:bold}
-.hero{text-align:center;padding:50px 20px 30px}.hero h1{font-size:48px;margin:0;line-height:1.1}.hero h1 u{text-decoration-color:#facc15;text-decoration-thickness:8px}.hero p{color:#666;max-width:600px;margin:16px auto}
-.cardLogin{max-width:420px;margin:30px auto;background:#fff;border:1px solid #eee;border-radius:16px;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,.08);text-align:center}
-.inp{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px}
-.btnG{width:100%;padding:12px;background:#fff;border:1px solid #ddd;border-radius:10px;font-weight:bold}.btnDark{width:100%;padding:12px;background:#ff6b00;color:#fff;border:0;border-radius:10px;font-weight:bold}
-.dash{max-width:1000px;margin:0 auto;padding:20px}.ask{border:1px solid #eee;border-radius:16px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.05)}.ask input{border:0;outline:0;width:100%;font-size:16px}
-.pills{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.pill{border:1px solid #eee;padding:7px 12px;border-radius:999px;font-size:13px;background:#fff}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}.materi{border:1px solid #eee;border-radius:16px;overflow:hidden;cursor:pointer}.materi:hover{border-color:#ff6b00}.materi .cover{background:#1e293b;color:#fff;padding:24px 16px;font-weight:bold;min-height:110px}.materi .body{padding:14px}.materi small{color:#888}
-.detail{display:flex;min-height:100vh}.side{width:210px;border-right:1px solid #eee;padding:20px 12px;position:sticky;top:0;height:100vh;background:#fff}.side div{padding:11px 12px;border-radius:10px;cursor:pointer;margin-bottom:4px}.side div.active{background:#ff6b00;color:#fff;font-weight:bold}
-.main{flex:1;padding:26px;max-width:800px}.step{background:#fff;border:1px solid #eee;border-radius:16px;padding:22px;line-height:1.7}
-.opt{border:1px solid #ddd;border-radius:12px;padding:13px;margin-top:10px;cursor:pointer}.opt.sel{border-color:#ff6b00;background:#fff7ed}
-.flash{border:2px solid #111;border-radius:16px;padding:40px 20px;text-align:center;font-size:22px;font-weight:bold;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
-.mindMain{background:#ff6b00;color:#fff;display:inline-block;padding:14px 22px;border-radius:999px;font-weight:bold}.mindChild{display:inline-block;background:#fff;border:2px solid #ff6b00;padding:9px 14px;border-radius:999px;margin:8px;font-size:13px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.side{width:150px}.hero h1{font-size:34px}}
-</style></head>
-<body>
+<!doctype html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BelajarBareng - Kaya Pelajarin.ai + AI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial;
+        margin: 0;
+        background: #fff;
+        color: #111;
+      }
+      button {
+        cursor: pointer;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .top {
+        background: #ff6b00;
+        color: #fff;
+        text-align: center;
+        padding: 8px;
+        font-size: 13px;
+      }
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 28px;
+      }
+      .btnO {
+        background: #ff6b00;
+        color: #fff;
+        border: 0;
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-weight: bold;
+      }
+      .hero {
+        text-align: center;
+        padding: 50px 20px 30px;
+      }
+      .hero h1 {
+        font-size: 48px;
+        margin: 0;
+        line-height: 1.1;
+      }
+      .hero h1 u {
+        text-decoration-color: #facc15;
+        text-decoration-thickness: 8px;
+      }
+      .hero p {
+        color: #666;
+        max-width: 600px;
+        margin: 16px auto;
+      }
+      .cardLogin {
+        max-width: 420px;
+        margin: 30px auto;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+      .inp {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      .btnG {
+        width: 100%;
+        padding: 12px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-weight: bold;
+      }
+      .btnDark {
+        width: 100%;
+        padding: 12px;
+        background: #ff6b00;
+        color: #fff;
+        border: 0;
+        border-radius: 10px;
+        font-weight: bold;
+      }
+      .dash {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .ask {
+        border: 1px solid #eee;
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      }
+      .ask input {
+        border: 0;
+        outline: 0;
+        width: 100%;
+        font-size: 16px;
+      }
+      .pills {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .pill {
+        border: 1px solid #eee;
+        padding: 7px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        background: #fff;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 20px;
+      }
+      .materi {
+        border: 1px solid #eee;
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .materi:hover {
+        border-color: #ff6b00;
+      }
+      .materi .cover {
+        background: #1e293b;
+        color: #fff;
+        padding: 24px 16px;
+        font-weight: bold;
+        min-height: 110px;
+      }
+      .materi .body {
+        padding: 14px;
+      }
+      .materi small {
+        color: #888;
+      }
+      .detail {
+        display: flex;
+        min-height: 100vh;
+      }
+      .side {
+        width: 210px;
+        border-right: 1px solid #eee;
+        padding: 20px 12px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        background: #fff;
+      }
+      .side div {
+        padding: 11px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 4px;
+      }
+      .side div.active {
+        background: #ff6b00;
+        color: #fff;
+        font-weight: bold;
+      }
+      .main {
+        flex: 1;
+        padding: 26px;
+        max-width: 800px;
+      }
+      .step {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 16px;
+        padding: 22px;
+        line-height: 1.7;
+      }
+      .opt {
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 13px;
+        margin-top: 10px;
+        cursor: pointer;
+      }
+      .opt.sel {
+        border-color: #ff6b00;
+        background: #fff7ed;
+      }
+      .flash {
+        border: 2px solid #111;
+        border-radius: 16px;
+        padding: 40px 20px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .mindMain {
+        background: #ff6b00;
+        color: #fff;
+        display: inline-block;
+        padding: 14px 22px;
+        border-radius: 999px;
+        font-weight: bold;
+      }
+      .mindChild {
+        display: inline-block;
+        background: #fff;
+        border: 2px solid #ff6b00;
+        padding: 9px 14px;
+        border-radius: 999px;
+        margin: 8px;
+        font-size: 13px;
+      }
+      @media (max-width: 700px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .side {
+          width: 150px;
+        }
+        .hero h1 {
+          font-size: 34px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="pageLanding">
+      <div class="top">✨ Kami baru saja mencapai 1.000.000 pengguna! ✨</div>
+      <div class="nav">
+        <b>📚 BelajarBareng</b
+        ><span><button class="btnO" onclick="showLogin()">Masuk</button></span>
+      </div>
+      <div class="hero">
+        <h1>Upload Materinya,<br />Langsung Siap <u>Ujian</u></h1>
+        <p>
+          Catatan kuliah, slide, bahkan rekaman kelas langsung jadi ringkasan,
+          flashcard, dan soal latihan — jadi kamu belajar yang paling mungkin
+          keluar.
+        </p>
+        <button
+          class="btnO"
+          style="font-size: 16px; padding: 14px 26px"
+          onclick="showLogin()"
+        >
+          Upload Materimu — Gratis →
+        </button>
+        <p style="font-size: 12px">
+          Tanpa kartu kredit, gratis selamanya! Pake AI Gemini beneran!
+        </p>
+        <div id="loginBox" class="cardLogin hidden">
+  <h2>Selamat datang di BelajarBareng</h2>
+  <p style="color: #666; font-size: 14px">
+    Masuk untuk lanjut belajar. Data lo kesimpen di semua HP!
+  </p>
+  <input id="namaLengkap" class="inp" placeholder="Nama Lengkap - buat Daftar" />
+  <input id="email" class="inp" placeholder="Email - contoh: faadhinabil@gmail.com" />
+  <input id="password" type="password" class="inp" placeholder="Password (min 6 huruf)" />
+  <button class="btnDark" onclick="daftarSupabase()">Daftar Akun Baru</button>
+  <button class="btnG" style="margin-top: 10px" onclick="loginSupabase()">
+    Sign in (Udah punya akun)
+  </button>
+  <p id="authMsg" style="font-size: 12px; color: #dc2626"></p>
+</div>
+      </div>
+    </div>
 
-<div id="pageLanding">
-<div class="top">✨ Kami baru saja mencapai 1.000.000 pengguna! ✨</div>
-<div class="nav"><b>📚 BelajarBareng</b><span><button class="btnO" onclick="showLogin()">Masuk</button></span></div>
-<div class="hero">
-<h1>Upload Materinya,<br>Langsung Siap <u>Ujian</u></h1>
-<p>Catatan kuliah, slide, bahkan rekaman kelas langsung jadi ringkasan, flashcard, dan soal latihan — jadi kamu belajar yang paling mungkin keluar.</p>
-<button class="btnO" style="font-size:16px;padding:14px 26px" onclick="showLogin()">Upload Materimu — Gratis →</button>
-<p style="font-size:12px">Tanpa kartu kredit, gratis selamanya! Pake AI Gemini beneran!</p>
-<div id="loginBox" class="cardLogin hidden">
-<h2>Selamat datang di BelajarBareng</h2><p style="color:#666;font-size:14px">Masuk untuk lanjut belajar.</p>
-<button class="btnG" onclick="loginGoogle()">🔍 Continue with Google</button><p style="font-size:12px;color:#999">OR</p>
-<input id="email" class="inp" placeholder="Email - contoh: faadhinabil@gmail.com">
-<input type="password" class="inp" placeholder="Password (bebas, buat demo)">
-<button class="btnDark" onclick="loginGoogle()">Sign in</button>
-<p style="font-size:12px;color:#888">Demo dulu ya (Versi A) - nanti Google beneran di Versi B!</p>
-</div>
-</div>
-</div>
+    <div id="pageDash" class="hidden">
+      <div class="nav">
+        <b>📚 BelajarBareng</b
+        ><span><button class="btnO" onclick="logout()">Keluar</button></span>
+      </div>
+      <div class="dash">
+        <h1>🤖 Mau belajar apa hari ini?</h1>
+        <div class="ask">
+          <input
+            id="askInput"
+            placeholder="Jelaskan fotosintesis dengan sederhana..."
+          />
+          <div class="pills">
+            <label class="pill"
+              >🎤 Rekam
+              <input
+                type="file"
+                id="fRekam"
+                accept=".pdf,.docx,.txt"
+                style="display: none"
+            /></label>
+            <label class="pill" style="background: #ff6b00; color: #fff"
+              >📤 Unggah
+              <input
+                type="file"
+                id="fUpload"
+                accept=".pdf,.docx,.txt"
+                style="display: none"
+            /></label>
+            <button class="pill" onclick="alert('Fitur YouTube nyusul ya!')">
+              ▶️ YouTube
+            </button>
+            <button
+              class="pill"
+              style="margin-left: auto; background: #111; color: #fff"
+              onclick="uploadDariAsk()"
+            >
+              ↑ Buat Materi (Pake AI)
+            </button>
+          </div>
+          <input
+            id="tJudul"
+            class="inp"
+            style="margin-top: 12px"
+            placeholder="Judul (boleh kosong, AI yang bikinin dari nama file!)"
+          />
+          <p id="st" style="font-size: 13px; color: #666"></p>
+        </div>
+        <h2 style="margin-top: 30px">📂 Catatan</h2>
+        <div id="grid" class="grid"></div>
+        <p id="empty" style="color: #888">
+          Belum ada catatan. Upload file PDF / Word lo di atas!
+        </p>
+      </div>
+    </div>
 
-<div id="pageDash" class="hidden">
-<div class="nav"><b>📚 BelajarBareng</b><span><button class="btnO" onclick="logout()">Keluar</button></span></div>
-<div class="dash">
-<h1>🤖 Mau belajar apa hari ini?</h1>
-<div class="ask">
-<input id="askInput" placeholder="Jelaskan fotosintesis dengan sederhana...">
-<div class="pills">
-<label class="pill">🎤 Rekam <input type="file" id="fRekam" accept=".pdf,.docx,.txt" style="display:none"></label>
-<label class="pill" style="background:#ff6b00;color:#fff">📤 Unggah <input type="file" id="fUpload" accept=".pdf,.docx,.txt" style="display:none"></label>
-<button class="pill" onclick="alert('Fitur YouTube nyusul ya!')">▶️ YouTube</button>
-<button class="pill" style="margin-left:auto;background:#111;color:#fff" onclick="uploadDariAsk()">↑ Buat Materi (Pake AI)</button>
-</div>
-<input id="tJudul" class="inp" style="margin-top:12px" placeholder="Judul (boleh kosong, AI yang bikinin dari nama file!)">
-<p id="st" style="font-size:13px;color:#666"></p>
-</div>
-<h2 style="margin-top:30px">📂 Catatan</h2>
-<div id="grid" class="grid"></div>
-<p id="empty" style="color:#888">Belum ada catatan. Upload file PDF / Word lo di atas!</p>
-</div>
-</div>
+    <div id="pageDetail" class="hidden">
+      <div class="detail">
+        <div class="side">
+          <b style="padding: 0 12px">📚 BelajarBareng</b><br /><br />
+          <div onclick="goHome()" style="background: #f3f4f6">← Beranda</div>
+          <div id="mCatatan" class="active" onclick="tab('catatan')">
+            📄 Catatan
+          </div>
+          <div id="mMindmap" onclick="tab('mindmap')">🧠 Mindmap</div>
+          <div id="mKuis" onclick="tab('kuis')">✍️ Kuis</div>
+          <div id="mFlash" onclick="tab('flash')">🃏 Flashcard</div>
+          <div id="mSumber" onclick="tab('sumber')">📦 Sumber</div>
+          <div id="mTanya" onclick="tab('tanya')">🤖 Tanya AI</div>
+          <div id="mPod" onclick="tab('pod')">🎙️ Podcast</div>
+          <div id="mTempel" onclick="tab('tempel')">📌 Tempel</div>
+        </div>
+        <div class="main">
+          <h1 id="dJudul">Judul</h1>
+          <p id="dProgress" style="color: #888"></p>
+          <div id="dContent"></div>
+        </div>
+      </div>
+    </div>
 
-<div id="pageDetail" class="hidden">
-<div class="detail">
-<div class="side">
-<b style="padding:0 12px">📚 BelajarBareng</b><br><br>
-<div onclick="goHome()" style="background:#f3f4f6">← Beranda</div>
-<div id="mCatatan" class="active" onclick="tab('catatan')">📄 Catatan</div>
-<div id="mMindmap" onclick="tab('mindmap')">🧠 Mindmap</div>
-<div id="mKuis" onclick="tab('kuis')">✍️ Kuis</div>
-<div id="mFlash" onclick="tab('flash')">🃏 Flashcard</div>
-<div id="mSumber" onclick="tab('sumber')">📦 Sumber</div>
-<div id="mTanya" onclick="tab('tanya')">🤖 Tanya AI</div>
-<div id="mPod" onclick="tab('pod')">🎙️ Podcast</div>
-<div id="mTempel" onclick="tab('tempel')">📌 Tempel</div>
-</div>
-<div class="main">
-<h1 id="dJudul">Judul</h1><p id="dProgress" style="color:#888"></p><div id="dContent"></div>
-</div>
-</div>
-</div>
-
-<script>
-let user = localStorage.getItem('bb_email');
-let data = JSON.parse(localStorage.getItem('bb_data')||'[]');
-let cur=null, curStep=0, curSoal=0, flashIdx=0, flashBalik=false, pilihanUser=-1;
-if(user) showDash();
-function showLogin(){ document.getElementById('loginBox').classList.remove('hidden'); document.getElementById('loginBox').scrollIntoView({behavior:'smooth'}); }
-function loginGoogle(){ const e=document.getElementById('email').value; if(!e||!e.includes('@')) return alert('Isi email dulu, contoh: faadhinabil@gmail.com'); localStorage.setItem('bb_email',e); user=e; showDash(); }
-function logout(){ localStorage.removeItem('bb_email'); location.reload(); }
-function showDash(){ document.getElementById('pageLanding').classList.add('hidden'); document.getElementById('pageDetail').classList.add('hidden'); document.getElementById('pageDash').classList.remove('hidden'); renderGrid(); }
-function goHome(){ showDash(); }
-async function bacaFile(f){
-  if(f.name.endsWith('.pdf')){ const b=await f.arrayBuffer(); const pdf=await pdfjsLib.getDocument({data:b}).promise; let t=''; for(let i=1;i<=pdf.numPages;i++){ const p=await pdf.getPage(i); const c=await p.getTextContent(); t+=c.items.map(x=>x.str).join(' ')+'\n'; } return t; }
-  if(f.name.endsWith('.docx')){ const b=await f.arrayBuffer(); const r=await mammoth.extractRawText({arrayBuffer:b}); return r.value; }
-  return await f.text();
-}
-// BERSIHIN TEKS BIAR GAK ADA SAMPAH S.Kom / FAKULTAS LAGI
-function bersihinTeks(text){
-  let lines=text.split('\n').map(s=>s.trim()).filter(s=>s.length>0);
-  let sampah=['s.kom','m.kom','semester','fakultas','pertemuan','tujuan pembelajaran','intan kumalasari','universitas','prodi','mata kuliah','dosen','gmail.com','http'];
-  let bersih=lines.filter(l=>{ let low=l.toLowerCase(); if(sampah.some(s=>low.includes(s)) && l.length<120) return false; if(l===l.toUpperCase() && l.split(' ').length>6) return false; if(l.length<15) return false; return true; });
-  return bersih.join(' ');
-}
-function kalimatDari(text){
-  let clean=bersihinTeks(text).replace(/\s+/g,' ').trim();
-  let k=clean.split(/(?<=[.!?])\s+/).filter(s=>s.length>30 && s.length<350);
-  let def=k.filter(x=>{ let l=x.toLowerCase(); return l.includes('adalah')||l.includes('merupakan')||l.includes('disebut')||l.includes('yaitu')||l.includes('berfungsi')||l.includes('digunakan'); });
-  return def.length>=3?def:(k.length?k:[clean]);
-}
-// UPLOAD PAKE AI GEMINI - INI OTAKNYA!
-async function uploadDariAsk(){
-  const f=document.getElementById('fUpload').files[0]||document.getElementById('fRekam').files[0];
-  if(!f) return alert('Pencet tombol Unggah dulu, pilih file PDF / Word lo!');
-  document.getElementById('st').innerText='🤖 AI lagi baca file lo... bikin judul, ringkasan, soal, flashcard... (10-20 detik, jangan tutup!)';
-  const textRaw=await bacaFile(f);
-  if(!textRaw||textRaw.trim().length<50) return alert('File gak kebaca!');
-  let text=bersihinTeks(textRaw);
-  let judulManual=document.getElementById('tJudul').value.trim();
-  try{
-    const res=await fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text, judul:f.name})});
-    const ai=await res.json();
-    if(ai.error) throw new Error(ai.error);
-    let judul=judulManual || ai.judul || f.name.replace(/\.(pdf|docx|txt)$/i,'');
-    data.unshift({title:judul, text, ai, date:new Date().toLocaleDateString('id-ID')});
-    localStorage.setItem('bb_data',JSON.stringify(data));
-    document.getElementById('st').innerText='✅ AI BERHASIL! Judul: '+judul+' - Klik kartunya!';
-    renderGrid();
-  }catch(e){
-    // FALLBACK KALO AI GAGAL / API KEY BELUM DIPASANG - PAKE CARA LOKAL, JANGAN ERROR
-    document.getElementById('st').innerText='⚠️ AI gagal ('+e.message+'), pake cara lokal dulu. Cek API Key di server.js ya!';
-    let judul=judulManual || f.name.replace(/\.(pdf|docx|txt)$/i,'').replace(/[-_]/g,' ');
-    let K=kalimatDari(text);
-    let aiFallback={judul:judul, ringkasan:K.slice(0,6), mindmap:{pusat:judul, cabang:K.slice(0,5).map(x=>x.slice(0,60))}, kuis:K.slice(0,5).map((k,i)=>({pertanyaan:'Lengkapi / pilih pernyataan yang paling benar tentang materi ini: "'+k.slice(0,120)+'..."', pilihan:[k.slice(0,150), K[(i+1)%K.length].slice(0,150), K[(i+2)%K.length].slice(0,150), K[(i+3)%K.length].slice(0,150)], jawabanBenar:0, penjelasan:'Jawaban ini diambil langsung dari file lo: "'+k+'"'})),
-    flashcard:K.slice(0,10).map(k=>{ let depan=k.split(' ').slice(0,2).join(' '); if(k.toLowerCase().includes('adalah')) depan=k.split(/adalah/i)[0].trim().slice(-40); return {depan:depan||'Istilah', belakang:k}; })};
-    data.unshift({title:judul, text, ai:aiFallback, date:new Date().toLocaleDateString('id-ID')});
-    localStorage.setItem('bb_data',JSON.stringify(data)); renderGrid();
+    <script>
+      const SUPABASE_URL = "https://sqyxuwrlorvynzyyyipl.supabase.co";
+      const SUPABASE_ANON = "sb_publishable_peEhOXIYqqzvNA73orTssg_ejkn2HGL";
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      let user = null;
+let data = JSON.parse(localStorage.getItem("bb_data") || "[]");
+let cur = null,
+  curStep = 0,
+  curSoal = 0,
+  flashIdx = 0,
+  flashBalik = false,
+  pilihanUser = -1;
+async function cekLogin() {
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+  if (session) {
+    user = session.user;
+    showDash();
   }
 }
-function renderGrid(){
-  const g=document.getElementById('grid');
-  document.getElementById('empty').style.display=data.length?'none':'block';
-  g.innerHTML=data.map((x,i)=>`<div class="materi" onclick="buka(${i})"><div class="cover">📄 ${x.title}</div><div class="body"><b>${x.title}</b><br><small>Dibuat ${x.date} • ${x.ai?'🤖 Pake AI':'📝 Lokal'} • Klik buat belajar →</small><br><button onclick="event.stopPropagation();hapus(${i})" style="margin-top:8px">Hapus</button></div></div>`).join('');
-}
-function hapus(i){ if(!confirm('Hapus materi ini?')) return; data.splice(i,1); localStorage.setItem('bb_data',JSON.stringify(data)); renderGrid(); }
-function buka(i){ cur=data[i]; curStep=0; curSoal=0; flashIdx=0; flashBalik=false;
-  document.getElementById('pageDash').classList.add('hidden');
-  document.getElementById('pageDetail').classList.remove('hidden');
-  document.getElementById('dJudul').innerText=cur.title;
-  tab('catatan');
-}
-function setActive(id){ document.querySelectorAll('.side div').forEach(d=>d.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function tab(t){
-  const c=document.getElementById('dContent');
-  document.getElementById('dProgress').innerText='';
-  if(t==='catatan'){
-    setActive('mCatatan');
-    let R=cur.ai?.ringkasan || kalimatDari(cur.text).slice(0,6);
-    let total=R.length;
-    document.getElementById('dProgress').innerText=`Langkah ${curStep+1} dari ${total} • Baca dulu, baru lanjut ke soal`;
-    c.innerHTML=`<div class="step"><h3>📖 Baca Materi</h3><p style="font-size:18px">${R[curStep%total]}</p><button class="btnO" onclick="nextStep()">Lanjut →</button></div><p style="color:#888;font-size:13px;margin-top:12px">Ini dari AI yang udah baca file lo, bukan potongan header.</p>`;
+cekLogin();
+async function cekLogin() {
+  const {
+    data: { session },
+  } = await supabaseClient.auth.getSession();
+  if (session) {
+    user = session.user;
+    showDash();
   }
-  if(t==='mindmap'){
-    setActive('mMindmap');
-    let M=cur.ai?.mindmap || {pusat:cur.title, cabang:kalimatDari(cur.text).slice(0,5)};
-    c.innerHTML=`<div style="text-align:center"><div class="mindMain">🎯 ${M.pusat}</div><br>${M.cabang.map(x=>`<span class="mindChild">→ ${x}</span>`).join('')}<br><br><button class="btnO" onclick="tab('kuis')">Lanjut ke Kuis →</button></div>`;
-  }
-  if(t==='kuis'){
-    setActive('mKuis');
-    let Q=cur.ai?.kuis || [];
-    if(!Q.length){ c.innerHTML='<p>Soal kosong, coba upload ulang.</p>'; return; }
-    let soal=Q[curSoal%Q.length]; pilihanUser=-1;
-    document.getElementById('dProgress').innerText=`Kuis • Soal ${curSoal+1} dari ${Q.length}`;
-    c.innerHTML=`<div style="display:flex;justify-content:space-between"><button onclick="alert('Petunjuk: Baca baik-baik, pilih yang paling nyambung sama materi!')">Tampilkan Petunjuk</button><button onclick="tab('catatan')">×</button></div>
+}
+cekLogin();
+      function showLogin() {
+        document.getElementById("loginBox").classList.remove("hidden");
+        document
+          .getElementById("loginBox")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+      async function daftarSupabase() {
+  const nama = document.getElementById("namaLengkap").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const pw = document.getElementById("password").value;
+  if (!nama) return alert("Isi Nama Lengkap dulu!");
+  if (!email.includes("@")) return alert("Isi email yang bener!");
+  if (pw.length < 6) return alert("Password min 6 huruf!");
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password: pw,
+    options: { data: { full_name: nama, display_name: nama } },
+  });
+  if (error) return alert(error.message);
+  const { data: loginData, error: loginErr } =
+    await supabaseClient.auth.signInWithPassword({ email, password: pw });
+  if (loginErr)
+    return alert("Berhasil daftar! Cek Gmail lo buat konfirmasi, baru login!");
+  user = loginData.user;
+  showDash();
+}
+async function loginSupabase() {
+  const email = document.getElementById("email").value.trim();
+  const pw = document.getElementById("password").value;
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password: pw,
+  });
+  if (error) return alert("Gagal login: " + error.message);
+  user = data.user;
+  showDash();
+}
+function loginGoogle() {
+  loginSupabase();
+}
+async function logout() {
+  await supabaseClient.auth.signOut();
+  location.reload();
+}
+      function showDash() {
+        document.getElementById("pageLanding").classList.add("hidden");
+        document.getElementById("pageDetail").classList.add("hidden");
+        document.getElementById("pageDash").classList.remove("hidden");
+        renderGrid();
+      }
+      function goHome() {
+        showDash();
+      }
+      async function bacaFile(f) {
+        if (f.name.endsWith(".pdf")) {
+          const b = await f.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: b }).promise;
+          let t = "";
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const p = await pdf.getPage(i);
+            const c = await p.getTextContent();
+            t += c.items.map((x) => x.str).join(" ") + "\n";
+          }
+          return t;
+        }
+        if (f.name.endsWith(".docx")) {
+          const b = await f.arrayBuffer();
+          const r = await mammoth.extractRawText({ arrayBuffer: b });
+          return r.value;
+        }
+        return await f.text();
+      }
+      // BERSIHIN TEKS BIAR GAK ADA SAMPAH S.Kom / FAKULTAS LAGI
+      function bersihinTeks(text) {
+        let lines = text
+          .split("\n")
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0);
+        let sampah = [
+          "s.kom",
+          "m.kom",
+          "semester",
+          "fakultas",
+          "pertemuan",
+          "tujuan pembelajaran",
+          "intan kumalasari",
+          "universitas",
+          "prodi",
+          "mata kuliah",
+          "dosen",
+          "gmail.com",
+          "http",
+        ];
+        let bersih = lines.filter((l) => {
+          let low = l.toLowerCase();
+          if (sampah.some((s) => low.includes(s)) && l.length < 120)
+            return false;
+          if (l === l.toUpperCase() && l.split(" ").length > 6) return false;
+          if (l.length < 15) return false;
+          return true;
+        });
+        return bersih.join(" ");
+      }
+      function kalimatDari(text) {
+        let clean = bersihinTeks(text).replace(/\s+/g, " ").trim();
+        let k = clean
+          .split(/(?<=[.!?])\s+/)
+          .filter((s) => s.length > 30 && s.length < 350);
+        let def = k.filter((x) => {
+          let l = x.toLowerCase();
+          return (
+            l.includes("adalah") ||
+            l.includes("merupakan") ||
+            l.includes("disebut") ||
+            l.includes("yaitu") ||
+            l.includes("berfungsi") ||
+            l.includes("digunakan")
+          );
+        });
+        return def.length >= 3 ? def : k.length ? k : [clean];
+      }
+      // UPLOAD PAKE AI GEMINI - INI OTAKNYA!
+      async function uploadDariAsk() {
+        const f =
+          document.getElementById("fUpload").files[0] ||
+          document.getElementById("fRekam").files[0];
+        if (!f)
+          return alert("Pencet tombol Unggah dulu, pilih file PDF / Word lo!");
+        document.getElementById("st").innerText =
+          "🤖 AI lagi baca file lo... bikin judul, ringkasan, soal, flashcard... (10-20 detik, jangan tutup!)";
+        const textRaw = await bacaFile(f);
+        if (!textRaw || textRaw.trim().length < 50)
+          return alert("File gak kebaca!");
+        let text = bersihinTeks(textRaw);
+        let judulManual = document.getElementById("tJudul").value.trim();
+        try {
+          const res = await fetch("/api/ai", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text, judul: f.name }),
+          });
+          const ai = await res.json();
+          if (ai.error) throw new Error(ai.error);
+          let judul =
+            judulManual || ai.judul || f.name.replace(/\.(pdf|docx|txt)$/i, "");
+          data.unshift({
+            title: judul,
+            text,
+            ai,
+            date: new Date().toLocaleDateString("id-ID"),
+          });
+          localStorage.setItem("bb_data", JSON.stringify(data));
+          document.getElementById("st").innerText =
+            "✅ AI BERHASIL! Judul: " + judul + " - Klik kartunya!";
+          renderGrid();
+        } catch (e) {
+          // FALLBACK KALO AI GAGAL / API KEY BELUM DIPASANG - PAKE CARA LOKAL, JANGAN ERROR
+          document.getElementById("st").innerText =
+            "⚠️ AI gagal (" +
+            e.message +
+            "), pake cara lokal dulu. Cek API Key di server.js ya!";
+          let judul =
+            judulManual ||
+            f.name.replace(/\.(pdf|docx|txt)$/i, "").replace(/[-_]/g, " ");
+          let K = kalimatDari(text);
+          let aiFallback = {
+            judul: judul,
+            ringkasan: K.slice(0, 6),
+            mindmap: {
+              pusat: judul,
+              cabang: K.slice(0, 5).map((x) => x.slice(0, 60)),
+            },
+            kuis: K.slice(0, 5).map((k, i) => ({
+              pertanyaan:
+                'Lengkapi / pilih pernyataan yang paling benar tentang materi ini: "' +
+                k.slice(0, 120) +
+                '..."',
+              pilihan: [
+                k.slice(0, 150),
+                K[(i + 1) % K.length].slice(0, 150),
+                K[(i + 2) % K.length].slice(0, 150),
+                K[(i + 3) % K.length].slice(0, 150),
+              ],
+              jawabanBenar: 0,
+              penjelasan:
+                'Jawaban ini diambil langsung dari file lo: "' + k + '"',
+            })),
+            flashcard: K.slice(0, 10).map((k) => {
+              let depan = k.split(" ").slice(0, 2).join(" ");
+              if (k.toLowerCase().includes("adalah"))
+                depan = k
+                  .split(/adalah/i)[0]
+                  .trim()
+                  .slice(-40);
+              return { depan: depan || "Istilah", belakang: k };
+            }),
+          };
+          data.unshift({
+            title: judul,
+            text,
+            ai: aiFallback,
+            date: new Date().toLocaleDateString("id-ID"),
+          });
+          localStorage.setItem("bb_data", JSON.stringify(data));
+          renderGrid();
+        }
+      }
+      function renderGrid() {
+        const g = document.getElementById("grid");
+        document.getElementById("empty").style.display = data.length
+          ? "none"
+          : "block";
+        g.innerHTML = data
+          .map(
+            (x, i) =>
+              `<div class="materi" onclick="buka(${i})"><div class="cover">📄 ${x.title}</div><div class="body"><b>${x.title}</b><br><small>Dibuat ${x.date} • ${x.ai ? "🤖 Pake AI" : "📝 Lokal"} • Klik buat belajar →</small><br><button onclick="event.stopPropagation();hapus(${i})" style="margin-top:8px">Hapus</button></div></div>`,
+          )
+          .join("");
+      }
+      function hapus(i) {
+        if (!confirm("Hapus materi ini?")) return;
+        data.splice(i, 1);
+        localStorage.setItem("bb_data", JSON.stringify(data));
+        renderGrid();
+      }
+      function buka(i) {
+        cur = data[i];
+        curStep = 0;
+        curSoal = 0;
+        flashIdx = 0;
+        flashBalik = false;
+        document.getElementById("pageDash").classList.add("hidden");
+        document.getElementById("pageDetail").classList.remove("hidden");
+        document.getElementById("dJudul").innerText = cur.title;
+        tab("catatan");
+      }
+      function setActive(id) {
+        document
+          .querySelectorAll(".side div")
+          .forEach((d) => d.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+      }
+      function tab(t) {
+        const c = document.getElementById("dContent");
+        document.getElementById("dProgress").innerText = "";
+        if (t === "catatan") {
+          setActive("mCatatan");
+          let R = cur.ai?.ringkasan || kalimatDari(cur.text).slice(0, 6);
+          let total = R.length;
+          document.getElementById("dProgress").innerText =
+            `Langkah ${curStep + 1} dari ${total} • Baca dulu, baru lanjut ke soal`;
+          c.innerHTML = `<div class="step"><h3>📖 Baca Materi</h3><p style="font-size:18px">${R[curStep % total]}</p><button class="btnO" onclick="nextStep()">Lanjut →</button></div><p style="color:#888;font-size:13px;margin-top:12px">Ini dari AI yang udah baca file lo, bukan potongan header.</p>`;
+        }
+        if (t === "mindmap") {
+          setActive("mMindmap");
+          let M = cur.ai?.mindmap || {
+            pusat: cur.title,
+            cabang: kalimatDari(cur.text).slice(0, 5),
+          };
+          c.innerHTML = `<div style="text-align:center"><div class="mindMain">🎯 ${M.pusat}</div><br>${M.cabang.map((x) => `<span class="mindChild">→ ${x}</span>`).join("")}<br><br><button class="btnO" onclick="tab('kuis')">Lanjut ke Kuis →</button></div>`;
+        }
+        if (t === "kuis") {
+          setActive("mKuis");
+          let Q = cur.ai?.kuis || [];
+          if (!Q.length) {
+            c.innerHTML = "<p>Soal kosong, coba upload ulang.</p>";
+            return;
+          }
+          let soal = Q[curSoal % Q.length];
+          pilihanUser = -1;
+          document.getElementById("dProgress").innerText =
+            `Kuis • Soal ${curSoal + 1} dari ${Q.length}`;
+          c.innerHTML = `<div style="display:flex;justify-content:space-between"><button onclick="alert('Petunjuk: Baca baik-baik, pilih yang paling nyambung sama materi!')">Tampilkan Petunjuk</button><button onclick="tab('catatan')">×</button></div>
     <h3 style="margin-top:16px">${soal.pertanyaan}</h3>
-    ${soal.pilihan.map((p,i)=>`<div class="opt" id="opt${i}" onclick="pilihKuis(${i})"><b>${['A','B','C','D'][i]}</b> &nbsp; ${p}</div>`).join('')}
+    ${soal.pilihan.map((p, i) => `<div class="opt" id="opt${i}" onclick="pilihKuis(${i})"><b>${["A", "B", "C", "D"][i]}</b> &nbsp; ${p}</div>`).join("")}
     <div id="fbKuis" style="margin-top:14px"></div>
     <div style="display:flex;justify-content:space-between;margin-top:16px"><button onclick="prevSoal()">← Sebelumnya</button><button class="btnO" id="btnPeriksa" onclick="periksaKuis()">Periksa jawaban ✓</button><button class="btnO" id="btnNext" style="display:none" onclick="nextSoal()">Selanjutnya →</button></div>`;
-  }
-  if(t==='flash'){
-    setActive('mFlash');
-    let F=cur.ai?.flashcard || [];
-    if(!F.length){ c.innerHTML='<p>Flashcard kosong.</p>'; return; }
-    let total=F.length; let kartu=F[flashIdx%total];
-    document.getElementById('dProgress').innerText=`${flashIdx+1} / ${total}`;
-    c.innerHTML=`<div style="display:flex;gap:8px;justify-content:center"><button>↻ Buat ulang</button><button>⟳ Ulangi</button><button onclick="kelolaFlash()">✎ Kelola</button></div>
-    <div class="flash" onclick="balikFlash()"><small style="color:#888;font-size:13px">${flashBalik?'Jawaban':'Pertanyaan'}</small><h2 style="margin:16px 0">${flashBalik?kartu.belakang:kartu.depan}</h2><p style="color:#999;font-size:13px">${flashBalik?'Klik untuk balik ke pertanyaan':'Klik untuk lihat jawaban'}</p></div>
-    ${flashBalik?`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:14px"><button style="background:#dc2626;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('lagi')">Lagi<br><small>1</small></button><button style="background:#0284c7;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('sulit')">Sulit<br><small>2</small></button><button style="background:#ff6b00;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('bagus')">Bagus<br><small>3</small></button><button style="background:#16a34a;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('mudah')">Mudah<br><small>4</small></button></div>`:`<div style="display:flex;justify-content:space-between;margin-top:14px"><button onclick="prevFlash()">← Sebelumnya</button><button onclick="nextFlash()">Berikutnya →</button></div>`}
+        }
+        if (t === "flash") {
+          setActive("mFlash");
+          let F = cur.ai?.flashcard || [];
+          if (!F.length) {
+            c.innerHTML = "<p>Flashcard kosong.</p>";
+            return;
+          }
+          let total = F.length;
+          let kartu = F[flashIdx % total];
+          document.getElementById("dProgress").innerText =
+            `${flashIdx + 1} / ${total}`;
+          c.innerHTML = `<div style="display:flex;gap:8px;justify-content:center"><button>↻ Buat ulang</button><button>⟳ Ulangi</button><button onclick="kelolaFlash()">✎ Kelola</button></div>
+    <div class="flash" onclick="balikFlash()"><small style="color:#888;font-size:13px">${flashBalik ? "Jawaban" : "Pertanyaan"}</small><h2 style="margin:16px 0">${flashBalik ? kartu.belakang : kartu.depan}</h2><p style="color:#999;font-size:13px">${flashBalik ? "Klik untuk balik ke pertanyaan" : "Klik untuk lihat jawaban"}</p></div>
+    ${flashBalik ? `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:14px"><button style="background:#dc2626;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('lagi')">Lagi<br><small>1</small></button><button style="background:#0284c7;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('sulit')">Sulit<br><small>2</small></button><button style="background:#ff6b00;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('bagus')">Bagus<br><small>3</small></button><button style="background:#16a34a;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('mudah')">Mudah<br><small>4</small></button></div>` : `<div style="display:flex;justify-content:space-between;margin-top:14px"><button onclick="prevFlash()">← Sebelumnya</button><button onclick="nextFlash()">Berikutnya →</button></div>`}
     <div id="kelolaBox"></div>`;
-  }
-  if(t==='sumber'){
-    setActive('mSumber');
-    c.innerHTML=`<div class="step"><h3>📦 Sumber</h3><p>File asli yang lo upload: <b>${cur.title}</b></p><p style="background:#f6f7fb;padding:12px;border-radius:10px">${cur.text.slice(0,800)}...</p><button class="btnO" onclick="downloadCatatan()">⬇️ Download Catatan</button></div>`;
-  }
-  if(t==='tanya'){
-    setActive('mTanya');
-    c.innerHTML=`<div class="step"><h3>🤖 Tanya AI - Hai, aku Pai!</h3><p>Tanya apa aja tentang dokumen ini, aku udah baca kok.</p><input id="qAI" class="inp" placeholder="Contoh: Jelaskan konsep utama dari materi ini..."><button class="btnO" onclick="tanyaAI()">Tanya</button><div id="aAI" style="margin-top:14px;background:#fff7ed;padding:14px;border-radius:12px">Jawaban bakal muncul di sini.</div></div>`;
-  }
-  if(t==='pod'){
-    setActive('mPod');
-    c.innerHTML=`<div class="step"><h3>🎙️ Buat Podcast</h3><p>Dari pelajaran <b>${cur.title}</b></p><p>Pilih 2 host:</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="pill" style="background:#111;color:#fff">Pai - Penjelas</button><button class="pill">Kiko - Si Penasaran</button><button class="pill">Bolu - Pendengar</button><button class="pill">Meli - Peneliti</button></div><br><p>Durasi: <button class="pill">3 menit</button> <button class="pill" style="background:#ff6b00;color:#fff">7 menit</button></p><button class="btnO" onclick="alert('Podcast AI nyusul ya! Untuk sekarang dengerin sambil baca catatan dulu 🎧')">🎙️ Buat Podcast</button></div>`;
-  }
-  if(t==='tempel'){
-    setActive('mTempel');
-    c.innerHTML=`<div class="step"><h3>📌 Catatan Tempel</h3><textarea id="tempelTxt" class="inp" rows="4" placeholder="Tulis catatan tempel lo di sini..."></textarea><button class="btnO" onclick="simpanTempel()">+ Catatan Tempel Baru</button><div id="listTempel"></div></div>`;
-    tampilTempel();
-  }
-}
-function nextStep(){ let R=cur.ai?.ringkasan||[]; curStep++; if(curStep>=R.length){ alert('🎉 Baca selesai! Lanjut ke Mindmap ya!'); tab('mindmap'); } else tab('catatan'); }
-function pilihKuis(i){ pilihanUser=i; document.querySelectorAll('.opt').forEach(o=>{o.style.borderColor='#ddd';o.style.background='#fff'}); document.getElementById('opt'+i).style.borderColor='#ff6b00'; document.getElementById('opt'+i).style.background='#fff7ed'; }
-function periksaKuis(){
-  if(pilihanUser===-1) return alert('Pilih dulu A / B / C / D!');
-  let Q=cur.ai.kuis; let soal=Q[curSoal%Q.length]; let benarIdx=soal.jawabanBenar;
-  document.getElementById('opt'+benarIdx).style.borderColor='#16a34a'; document.getElementById('opt'+benarIdx).style.background='#f0fdf4';
-  if(pilihanUser!==benarIdx){ document.getElementById('opt'+pilihanUser).style.borderColor='#dc2626'; document.getElementById('opt'+pilihanUser).style.background='#fef2f2'; document.getElementById('fbKuis').innerHTML=`<div style="background:#fef2f2;border:1px solid #fecaca;padding:14px;border-radius:12px"><b>⚠️ Jawaban yang benar: ${['A','B','C','D'][benarIdx]}</b><br>Penjelasan: ${soal.penjelasan}</div>`; }
-  else { document.getElementById('fbKuis').innerHTML=`<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:14px;border-radius:12px"><b>✅ BENAR! Mantap!</b><br>Penjelasan: ${soal.penjelasan}</div>`; }
-  document.getElementById('btnPeriksa').style.display='none'; document.getElementById('btnNext').style.display='block';
-}
-function nextSoal(){ curSoal++; let Q=cur.ai?.kuis||[]; if(curSoal>=Q.length){ alert('🎉 Kuis selesai! Lanjut ke Flashcard!'); tab('flash'); } else tab('kuis'); }
-function prevSoal(){ curSoal=Math.max(0,curSoal-1); tab('kuis'); }
-function balikFlash(){ flashBalik=!flashBalik; tab('flash'); }
-function nextFlash(){ flashIdx++; flashBalik=false; tab('flash'); }
-function prevFlash(){ flashIdx=Math.max(0,flashIdx-1); flashBalik=false; tab('flash'); }
-function nilaiFlash(n){ if(n==='lagi') alert('Oke, kartu ini bakal muncul lagi nanti!'); flashIdx++; flashBalik=false; tab('flash'); }
-function kelolaFlash(){
-  let F=cur.ai?.flashcard||[];
-  document.getElementById('kelolaBox').innerHTML=`<h3>${F.length} kartu</h3>`+F.map(k=>`<div style="border:1px solid #eee;border-radius:12px;padding:12px;margin-top:8px"><b>${k.depan}</b><br><small>${k.belakang}</small><br><span style="font-size:11px;color:#888">AI</span></div>`).join('');
-}
-function tanyaAI(){
-  const q=document.getElementById('qAI').value.toLowerCase();
-  const K=kalimatDari(cur.text);
-  let kata=q.split(' ').filter(w=>w.length>3);
-  let ketemu=K.find(k=>kata.some(w=>k.toLowerCase().includes(w)))||K[0];
-  document.getElementById('aAI').innerText='🤖 Pai: Dari file lo, jawabannya: "'+ketemu+'"';
-}
-function downloadCatatan(){
-  let R=cur.ai?.ringkasan||[];
-  let txt=`CATATAN - ${cur.title}\n\n`+R.map((k,i)=>(i+1)+'. '+k).join('\n');
-  const b=new Blob([txt],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='Catatan-'+cur.title+'.txt'; a.click();
-}
-function simpanTempel(){ let arr=JSON.parse(localStorage.getItem('bb_tempel')||'[]'); arr.push(document.getElementById('tempelTxt').value); localStorage.setItem('bb_tempel',JSON.stringify(arr)); tampilTempel(); }
-function tampilTempel(){ let arr=JSON.parse(localStorage.getItem('bb_tempel')||'[]'); document.getElementById('listTempel').innerHTML=arr.map(t=>`<div style="background:#fef9c3;padding:12px;border-radius:10px;margin-top:10px">📌 ${t}</div>`).join(''); }
-document.getElementById('fUpload').addEventListener('change', ()=>{ document.getElementById('st').innerText='File dipilih: '+document.getElementById('fUpload').files[0].name+' - klik Buat Materi (Pake AI)!'; });
-</script></body></html>
+        }
+        if (t === "sumber") {
+          setActive("mSumber");
+          c.innerHTML = `<div class="step"><h3>📦 Sumber</h3><p>File asli yang lo upload: <b>${cur.title}</b></p><p style="background:#f6f7fb;padding:12px;border-radius:10px">${cur.text.slice(0, 800)}...</p><button class="btnO" onclick="downloadCatatan()">⬇️ Download Catatan</button></div>`;
+        }
+        if (t === "tanya") {
+          setActive("mTanya");
+          c.innerHTML = `<div class="step"><h3>🤖 Tanya AI - Hai, aku Pai!</h3><p>Tanya apa aja tentang dokumen ini, aku udah baca kok.</p><input id="qAI" class="inp" placeholder="Contoh: Jelaskan konsep utama dari materi ini..."><button class="btnO" onclick="tanyaAI()">Tanya</button><div id="aAI" style="margin-top:14px;background:#fff7ed;padding:14px;border-radius:12px">Jawaban bakal muncul di sini.</div></div>`;
+        }
+        if (t === "pod") {
+          setActive("mPod");
+          c.innerHTML = `<div class="step"><h3>🎙️ Buat Podcast</h3><p>Dari pelajaran <b>${cur.title}</b></p><p>Pilih 2 host:</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="pill" style="background:#111;color:#fff">Pai - Penjelas</button><button class="pill">Kiko - Si Penasaran</button><button class="pill">Bolu - Pendengar</button><button class="pill">Meli - Peneliti</button></div><br><p>Durasi: <button class="pill">3 menit</button> <button class="pill" style="background:#ff6b00;color:#fff">7 menit</button></p><button class="btnO" onclick="alert('Podcast AI nyusul ya! Untuk sekarang dengerin sambil baca catatan dulu 🎧')">🎙️ Buat Podcast</button></div>`;
+        }
+        if (t === "tempel") {
+          setActive("mTempel");
+          c.innerHTML = `<div class="step"><h3>📌 Catatan Tempel</h3><textarea id="tempelTxt" class="inp" rows="4" placeholder="Tulis catatan tempel lo di sini..."></textarea><button class="btnO" onclick="simpanTempel()">+ Catatan Tempel Baru</button><div id="listTempel"></div></div>`;
+          tampilTempel();
+        }
+      }
+      function nextStep() {
+        let R = cur.ai?.ringkasan || [];
+        curStep++;
+        if (curStep >= R.length) {
+          alert("🎉 Baca selesai! Lanjut ke Mindmap ya!");
+          tab("mindmap");
+        } else tab("catatan");
+      }
+      function pilihKuis(i) {
+        pilihanUser = i;
+        document.querySelectorAll(".opt").forEach((o) => {
+          o.style.borderColor = "#ddd";
+          o.style.background = "#fff";
+        });
+        document.getElementById("opt" + i).style.borderColor = "#ff6b00";
+        document.getElementById("opt" + i).style.background = "#fff7ed";
+      }
+      function periksaKuis() {
+        if (pilihanUser === -1) return alert("Pilih dulu A / B / C / D!");
+        let Q = cur.ai.kuis;
+        let soal = Q[curSoal % Q.length];
+        let raw = soal.jawabanBenar ?? soal.jawaban_benar ?? soal.jawaban;
+        let benarIdx;
+        if (typeof raw === "number") {
+          benarIdx = raw;
+        } else if (
+          typeof raw === "string" &&
+          ["A", "B", "C", "D"].includes(raw.trim().toUpperCase()[0]) &&
+          raw.trim().length <= 2
+        ) {
+          benarIdx = ["A", "B", "C", "D"].indexOf(raw.trim().toUpperCase()[0]);
+        } else if (!isNaN(parseInt(raw))) {
+          benarIdx = parseInt(raw);
+          if (benarIdx >= 1 && benarIdx <= 4) benarIdx = benarIdx - 1;
+        } else {
+          benarIdx = (soal.pilihan || []).findIndex((p) =>
+            String(p)
+              .toLowerCase()
+              .includes(String(raw).toLowerCase().slice(0, 20)),
+          );
+        }
+        if (benarIdx < 0 || benarIdx > 3) benarIdx = 0;
+        document.getElementById("opt" + benarIdx).style.borderColor = "#16a34a";
+        document.querySelectorAll(".opt")[benarIdx].style.background =
+          "#f0fdf4";
+        if (pilihanUser !== benarIdx) {
+          document.querySelectorAll(".opt")[pilihanUser].style.borderColor =
+            "#dc2626";
+          document.querySelectorAll(".opt")[pilihanUser].style.background =
+            "#fef2f2";
+          document.getElementById("fbKuis").innerHTML =
+            `<div style="background:#fef2f2;border:1px solid #fecaca;padding:14px;border-radius:12px"><b>⚠️ Jawaban yang benar: ${["A", "B", "C", "D"][benarIdx]}</b><br>Penjelasan: ${soal.pembahasan || soal.penjelasan}</div>`;
+        } else {
+          document.getElementById("fbKuis").innerHTML =
+            `<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:14px;border-radius:12px"><b>✅ BENAR! Mantap!</b><br>Penjelasan: ${soal.pembahasan || soal.penjelasan}</div>`;
+        }
+        document.getElementById("btnPeriksa").style.display = "none";
+        document.getElementById("btnNext").style.display = "block";
+      }
+      function nextSoal() {
+        curSoal++;
+        let Q = cur.ai?.kuis || [];
+        if (curSoal >= Q.length) {
+          alert("🎉 Kuis selesai! Lanjut ke Flashcard!");
+          tab("flash");
+        } else tab("kuis");
+      }
+      function prevSoal() {
+        curSoal = Math.max(0, curSoal - 1);
+        tab("kuis");
+      }
+      function balikFlash() {
+        flashBalik = !flashBalik;
+        tab("flash");
+      }
+      function nextFlash() {
+        flashIdx++;
+        flashBalik = false;
+        tab("flash");
+      }
+      function prevFlash() {
+        flashIdx = Math.max(0, flashIdx - 1);
+        flashBalik = false;
+        tab("flash");
+      }
+      function nilaiFlash(n) {
+        if (n === "lagi") alert("Oke, kartu ini bakal muncul lagi nanti!");
+        flashIdx++;
+        flashBalik = false;
+        tab("flash");
+      }
+      function kelolaFlash() {
+        let F = cur.ai?.flashcard || [];
+        document.getElementById("kelolaBox").innerHTML =
+          `<h3>${F.length} kartu</h3>` +
+          F.map(
+            (k) =>
+              `<div style="border:1px solid #eee;border-radius:12px;padding:12px;margin-top:8px"><b>${k.depan}</b><br><small>${k.belakang}</small><br><span style="font-size:11px;color:#888">AI</span></div>`,
+          ).join("");
+      }
+      function tanyaAI() {
+        const q = document.getElementById("qAI").value.toLowerCase();
+        const K = kalimatDari(cur.text);
+        let kata = q.split(" ").filter((w) => w.length > 3);
+        let ketemu =
+          K.find((k) => kata.some((w) => k.toLowerCase().includes(w))) || K[0];
+        document.getElementById("aAI").innerText =
+          '🤖 Pai: Dari file lo, jawabannya: "' + ketemu + '"';
+      }
+      function downloadCatatan() {
+        let R = cur.ai?.ringkasan || [];
+        let txt =
+          `CATATAN - ${cur.title}\n\n` +
+          R.map((k, i) => i + 1 + ". " + k).join("\n");
+        const b = new Blob([txt], { type: "text/plain" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(b);
+        a.download = "Catatan-" + cur.title + ".txt";
+        a.click();
+      }
+      function simpanTempel() {
+        let arr = JSON.parse(localStorage.getItem("bb_tempel") || "[]");
+        arr.push(document.getElementById("tempelTxt").value);
+        localStorage.setItem("bb_tempel", JSON.stringify(arr));
+        tampilTempel();
+      }
+      function tampilTempel() {
+        let arr = JSON.parse(localStorage.getItem("bb_tempel") || "[]");
+        document.getElementById("listTempel").innerHTML = arr
+          .map(
+            (t) =>
+              `<div style="background:#fef9c3;padding:12px;border-radius:10px;margin-top:10px">📌 ${t}</div>`,
+          )
+          .join("");
+      }
+      document.getElementById("fUpload").addEventListener("change", () => {
+        document.getElementById("st").innerText =
+          "File dipilih: " +
+          document.getElementById("fUpload").files[0].name +
+          " - klik Buat Materi (Pake AI)!";
+      });
+    </script>
+  </body>
+</html>
