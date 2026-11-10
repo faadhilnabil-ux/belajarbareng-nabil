@@ -536,17 +536,14 @@ function keluar() {
 
 // 2. LOGOUT BENERAN - EMAIL KEHAPUS DARI SUPABASE, TAPI DATA TETAP ADA!
 async function logout() {
-  if (!confirm("Yakin mau Logout? Email lo bakal dihapus dari Supabase, tapi data belajar lo TETAP AMAN dan bakal balik lagi kalo lo daftar pake email yang sama!")) return;
-
-  // Hapus user dari Supabase Auth lewat server lo
+  if (!confirm("Yakin mau Logout? Email lo bakal dihapus dari Supabase, tapi catatan lo TETEP AMAN!")) return;
+  await simpanData();
   try {
-    await fetch("/hapus-user", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: user?.email })
-    });
-  } catch(e) {}
-
+    const { error } = await supabaseClient.functions.invoke('hapus-user');
+    if (error) throw error;
+  } catch (e) {
+    console.log("Edge Function gagal:", e.message);
+  }
   await supabaseClient.auth.signOut();
   localStorage.clear();
   user = null;
