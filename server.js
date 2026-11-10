@@ -115,4 +115,9 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   res.json({ ok:true, file: req.file?.filename });
 });
 
-app.listen(PORT, ()=>console.log('Jalan di http://localhost:3000 - AI AKTIF!'));
+// Biar jalan di Vercel & di Laptop
+if (!process.env.VERCEL) {
+  app.listen(PORT, ()=>console.log('Jalan di http://localhost:3000 - AI AKTIF!'));
+}
+
+module.exports = app;

@@ -4,6 +4,12 @@
     <meta name="google-site-verification" content="PbhKN60flsQx-HihNt-cul_dXnm2zydNnGTgnMDlRl8" />
     <title>BelajarBareng - Upload Materi, Langsung Siap Ujian</title>
 <meta name="description" content="BelajarBareng - Upload PDF, Word, atau YouTube, AI bikinin rangkuman dan soal latihan otomatis. Gratis buat pelajar Indonesia.">
+<meta name="keywords" content="belajar bareng nabil, belajarbareng, belajar online gratis, kuis otomatis, flashcard, belajar pdf">
+<meta property="og:title" content="BelajarBareng - Upload Materi, Langsung Siap Ujian">
+<meta property="og:description" content="Upload PDF, Word, atau YouTube langsung jadi Kuis, Flashcard, Mindmap & AI. Gratis buat pelajar Indonesia!">
+<meta property="og:url" content="https://belajarbareng-nabil.vercel.app">
+<meta property="og:type" content="website">
+<meta name="robots" content="index, follow">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -277,14 +283,13 @@
   <p style="color: #666; font-size: 14px">
     Masuk untuk lanjut belajar. Data lo kesimpen di semua HP!
   </p>
-  <input id="namaLengkap" class="inp" placeholder="Nama Lengkap - buat Daftar" />
-  <input id="email" class="inp" placeholder="Email - contoh: faadhinabil@gmail.com" />
-  <input id="password" type="password" class="inp" placeholder="Password (min 6 huruf)" />
-  <button class="btnDark" onclick="daftarSupabase()">Daftar Akun Baru</button>
-  <button class="btnG" style="margin-top: 10px" onclick="loginSupabase()">
-    Sign in (Udah punya akun)
-  </button>
-  <p id="authMsg" style="font-size: 12px; color: #dc2626"></p>
+  <input id="namaLengkap" class="inp" placeholder="Nama Lengkap" />
+<input id="email" class="inp" placeholder="Email - contoh: faadhinabil@gmail.com" />
+<input id="password" type="password" class="inp" placeholder="Password (min 6 huruf)" />
+<button id="btnDaftar" class="btnDark" onclick="daftarSupabase()">Daftar Akun Baru</button>
+<button id="btnSignIn" class="btnG" style="margin-top:10px" onclick="masukModeSignIn()">Sign in (Udah punya akun)</button>
+<p id="linkBalik" style="font-size:12px; color:#666; cursor:pointer; display:none; margin-top:10px" onclick="masukModeDaftar()">Belum punya akun? Daftar disini</p>
+<p id="authMsg" style="font-size:12px; color:#dc2626"></p>
 </div>
       </div>
     </div>
@@ -292,7 +297,7 @@
     <div id="pageDash" class="hidden">
       <div class="nav">
         <b>📚 BelajarBareng</b
-        ><span><button class="btnO" onclick="logout()">Keluar</button></span>
+        ><span><button class="btnO" onclick="keluar()">Keluar</button><button class="btnO" onclick="logout()" style="background:#ef4444 !important;">logout</button></span>
       </div>
       <div class="dash">
         <h1>🤖 Mau belajar apa hari ini?</h1>
@@ -381,6 +386,7 @@ let cur = null,
   flashIdx = 0,
   flashBalik = false,
   pilihanUser = -1;
+
 async function cekLogin() {
   const {
     data: { session },
@@ -388,16 +394,8 @@ async function cekLogin() {
   if (session) {
     user = session.user;
     showDash();
-  }
-}
-cekLogin();
-async function cekLogin() {
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
-  if (session) {
-    user = session.user;
-    showDash();
+    await loadData();
+await simpanData();
   }
 }
 cekLogin();
@@ -414,36 +412,147 @@ cekLogin();
   if (!nama) return alert("Isi Nama Lengkap dulu!");
   if (!email.includes("@")) return alert("Isi email yang bener!");
   if (pw.length < 6) return alert("Password min 6 huruf!");
+
   const { data, error } = await supabaseClient.auth.signUp({
-    email,
-    password: pw,
-    options: { data: { full_name: nama, display_name: nama } },
+    email, password: pw,
+    options: { data: { full_name: nama } }
   });
-  if (error) return alert(error.message);
-  const { data: loginData, error: loginErr } =
-    await supabaseClient.auth.signInWithPassword({ email, password: pw });
-  if (loginErr)
-    return alert("Berhasil daftar! Cek Gmail lo buat konfirmasi, baru login!");
+
+  // KALO UDAH PERNAH DAFTAR, LANGSUNG LOGIN AJA, JANGAN DITOLAK!
+  if (error) {
+    if (error.message.includes("already registered") || error.message.includes("already exists")) {
+      const { data: loginData, error: loginErr } = await supabaseClient.auth.signInWithPassword({ email, password: pw });
+      if (loginErr) return alert("Email ini udah terdaftar! Pencet tombol Sign In di bawah!");
+      localStorage.setItem("lastEmail", email);
+      localStorage.setItem("lastNama", nama);
+      user = loginData.user;
+      showDash();
+      return;
+    }
+    return alert(error.message);
+  }
+
+  localStorage.setItem("lastEmail", email);
+  localStorage.setItem("lastNama", nama);
+  localStorage.setItem('user_' + nama.toLowerCase() + '_email', email);
+
+  const { data: loginData, error: loginErr } = await supabaseClient.auth.signInWithPassword({ email, password: pw });
+  if (loginErr) return alert("Berhasil daftar! Cek Gmail lo!");
   user = loginData.user;
   showDash();
 }
-async function loginSupabase() {
-  const email = document.getElementById("email").value.trim();
+// SIMPAN SEMUA DATA KE SUPABASE - PAKE EMAIL!
+async function simpanData() {
+  if (!user?.email) return;
+  const semuaData = {
+    lastEmail: localStorage.getItem("lastEmail"),
+    lastNama: localStorage.getItem("lastNama"),
+    chat: window.chatHistory || [],
+    materi: window.materiSelesai || []
+  };
+  await supabaseClient.from("data_user").upsert({
+    email: user.email,
+    data: semuaData
+  });
+}
+
+// LOAD SEMUA DATA PAS LOGIN - DARI HP MANA AJA!
+async function loadData() {
+  if (!user?.email) return;
+  const { data } = await supabaseClient.from("data_user").select("data").eq("email", user.email).single();
+  if (data?.data) {
+    window.chatHistory = data.data.chat || [];
+    window.materiSelesai = data.data.materi || [];
+  }
+}
+// MODE SIGN IN: SEMBUNYIIN EMAIL
+function masukModeSignIn(){
+  document.getElementById('email').style.display = 'none';
+  document.getElementById('namaLengkap').placeholder = 'Nama Lengkap - buat Sign In';
+  document.getElementById('btnDaftar').style.display = 'none';
+  document.getElementById('btnSignIn').innerText = 'Sign In';
+  document.getElementById('btnSignIn').onclick = loginSupabase;
+  document.getElementById('btnSignIn').className = 'btnDark';
+  document.getElementById('linkBalik').style.display = 'block';
+}
+
+function masukModeDaftar(){
+  document.getElementById('email').style.display = 'block';
+  document.getElementById('namaLengkap').placeholder = 'Nama Lengkap';
+  document.getElementById('btnDaftar').style.display = 'block';
+  document.getElementById('btnSignIn').innerText = 'Sign in (Udah punya akun)';
+  document.getElementById('btnSignIn').onclick = masukModeSignIn;
+  document.getElementById('btnSignIn').className = 'btnG';
+  document.getElementById('linkBalik').style.display = 'none';
+}
+
+// LOGIN PAKE NAMA + PASSWORD DOANG
+async function loginSupabase(){
+  const nama = document.getElementById("namaLengkap").value.trim();
   const pw = document.getElementById("password").value;
+  if(!nama || !pw) return alert('Isi Nama sama Password dulu!');
+
+  // Cari emailnya dari nama yang pernah daftar
+  let email = localStorage.getItem('user_' + nama.toLowerCase() + '_email');
+  if(!email){
+    const { data } = await supabaseClient.from('data_user').select('email').eq('nama', nama).single();
+    if(data) email = data.email;
+  }
+  if(!email){
+  email = prompt('Nama "' + nama + '" belum keinget di HP ini.\nMasukin Email yang dulu lo pake daftar (1x aja, abis ini keinget):');
+  if(!email) return;
+  email = email.trim();
+  localStorage.setItem('user_' + nama.toLowerCase() + '_email', email);
+}
+
   const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
+    email: email,
     password: pw,
   });
-  if (error) return alert("Gagal login: " + error.message);
+  if (error) return alert("Gagal login: Password / Nama salah!");
   user = data.user;
   showDash();
+  await loadData();
+  await simpanData();
+  localStorage.setItem("lastEmail", email);
+  localStorage.setItem("lastNama", nama);
+  localStorage.setItem('user_' + nama.toLowerCase() + '_email', email);
 }
-function loginGoogle() {
-  loginSupabase();
+async function loginGoogle() {
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin }
+  });
+  if (error) alert("Gagal login Google: " + error.message);
 }
+// 1. KELUAR - DATA AMAN, AKUN MASIH NYANTOL!
+// 1. KELUAR DOANG - AKUN MASIH NYANGKUT!
+function keluar() {
+  document.getElementById("pageDash").classList.add("hidden");
+  document.getElementById("pageLanding").classList.remove("hidden");
+  // GAK SIGNOUT! GAK HAPUS LOCALSTORAGE!
+  // Jadi pas refresh, langsung masuk lagi!
+}
+
+// 2. LOGOUT BENERAN - EMAIL KEHAPUS DARI SUPABASE, TAPI DATA TETAP ADA!
 async function logout() {
+  if (!confirm("Yakin mau Logout? Email lo bakal dihapus dari Supabase, tapi data belajar lo TETAP AMAN dan bakal balik lagi kalo lo daftar pake email yang sama!")) return;
+
+  // Hapus user dari Supabase Auth lewat server lo
+  try {
+    await fetch("/hapus-user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: user?.email })
+    });
+  } catch(e) {}
+
   await supabaseClient.auth.signOut();
-  location.reload();
+  localStorage.clear();
+  user = null;
+  document.getElementById("pageDash").classList.add("hidden");
+  document.getElementById("pageLanding").classList.remove("hidden");
+  alert("Udah Logout! Email kehapus dari Supabase, tapi data lo aman!");
 }
       function showDash() {
         document.getElementById("pageLanding").classList.add("hidden");
@@ -523,29 +632,38 @@ async function logout() {
         return def.length >= 3 ? def : k.length ? k : [clean];
       }
       // UPLOAD PAKE AI GEMINI - INI OTAKNYA!
-      async function uploadDariAsk() {
-        const f =
-          document.getElementById("fUpload").files[0] ||
-          document.getElementById("fRekam").files[0];
-        if (!f)
-          return alert("Pencet tombol Unggah dulu, pilih file PDF / Word lo!");
-        document.getElementById("st").innerText =
-          "🤖 AI lagi baca file lo... bikin judul, ringkasan, soal, flashcard... (10-20 detik, jangan tutup!)";
-        const textRaw = await bacaFile(f);
-        if (!textRaw || textRaw.trim().length < 50)
-          return alert("File gak kebaca!");
-        let text = bersihinTeks(textRaw);
-        let judulManual = document.getElementById("tJudul").value.trim();
-        try {
+     async function uploadDariAsk() {
+  const f = document.getElementById("fUpload").files[0] || document.getElementById("fRekam").files[0];
+  // AMBIL KETIKAN LO - dari textarea / input apapun
+  const elAsk = document.getElementById("askInput");
+const teksKetik = (elAsk?.value || elAsk?.textContent || elAsk?.innerText || "").trim();
+  let judulManual = document.getElementById("tJudul").value.trim();
+  let textRaw = "";
+
+  if (f) {
+    // MODE 1: KALO ADA FILE -> BACA FILE
+    document.getElementById("st").innerText = "🤖 AI lagi baca file lo... bikin judul, ringkasan, soal, flashcard...";
+    textRaw = await bacaFile(f);
+    if (!textRaw || textRaw.trim().length < 50) return alert("File gak kebaca!");
+  } else if (teksKetik.length >= 3) {
+    // MODE 2: KALO CUMA KETIK TEKS -> PAKE TEKS ITU
+    document.getElementById("st").innerText = "🤖 AI lagi bikin materi dari ketikan lo...";
+    textRaw = teksKetik;
+    if (!judulManual) judulManual = teksKetik.slice(0, 60);
+  } else {
+    return alert("Ketik dulu topiknya ATAU pencet tombol Unggah, pilih file PDF / Word lo!");
+  }
+  let text = bersihinTeks(textRaw);
+  try {
           const res = await fetch("/api/ai", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text, judul: f.name }),
+            body: JSON.stringify({ text, judul: judulManual || (f ? f.name : "Materi Baru") }),
           });
           const ai = await res.json();
           if (ai.error) throw new Error(ai.error);
           let judul =
-            judulManual || ai.judul || f.name.replace(/\.(pdf|docx|txt)$/i, "");
+  judulManual || ai.judul || (f ? f.name.replace(/\.(pdf|docx|txt)$/i, "") : "Materi Baru");
           data.unshift({
             title: judul,
             text,
@@ -648,7 +766,18 @@ async function logout() {
         document.getElementById("dProgress").innerText = "";
         if (t === "catatan") {
           setActive("mCatatan");
-          let R = cur.ai?.ringkasan || kalimatDari(cur.text).slice(0, 6);
+         let catatanArr = cur.ai?.catatan || null;
+if (Array.isArray(catatanArr) && catatanArr.length && typeof catatanArr[0] === 'object') {
+  let R = catatanArr.map(x => (x.judul||"") + ": " + (x.isi||x.teks||""));
+  let total = R.length;
+  document.getElementById("dProgress").innerText = `Langkah ${curStep + 1} dari ${total} • Baca dulu, baru lanjut ke soal`;
+  c.innerHTML = `<div class="step"><h3>📖 ${catatanArr[curStep % total].judul || "Baca Materi"}</h3><p style="font-size:18px">${R[curStep % total]}</p><button class="btnO" onclick="nextStep()">Lanjut →</button></div>`;
+  return;
+}
+let Rraw = cur.ai?.ringkasan || cur.ai?.materi || "";
+let R = Array.isArray(Rraw) ? Rraw : kalimatDari(Rraw);
+if (!R.length) R = kalimatDari(cur.text).slice(0, 6);
+R = R.slice(0, 6);
           let total = R.length;
           document.getElementById("dProgress").innerText =
             `Langkah ${curStep + 1} dari ${total} • Baca dulu, baru lanjut ke soal`;
@@ -656,15 +785,19 @@ async function logout() {
         }
         if (t === "mindmap") {
           setActive("mMindmap");
-          let M = cur.ai?.mindmap || {
-            pusat: cur.title,
-            cabang: kalimatDari(cur.text).slice(0, 5),
-          };
+          let M = cur.ai?.mindmap || { pusat: cur.title, cabang: kalimatDari(cur.text).slice(0, 5) };
+let cabangArr = M.cabang || M.anak || [];
+cabangArr = cabangArr.map(x => typeof x === 'string' ? x : (x.teks || x.judul || x.nama || "") + (x.anak ? " → " + x.anak.map(y => typeof y === 'string' ? y : (y.teks||y.judul||"")).join(", ") : ""));
+M = { pusat: M.pusat || cur.title, cabang: cabangArr };
           c.innerHTML = `<div style="text-align:center"><div class="mindMain">🎯 ${M.pusat}</div><br>${M.cabang.map((x) => `<span class="mindChild">→ ${x}</span>`).join("")}<br><br><button class="btnO" onclick="tab('kuis')">Lanjut ke Kuis →</button></div>`;
         }
         if (t === "kuis") {
           setActive("mKuis");
-          let Q = cur.ai?.kuis || [];
+          let Q = (cur.ai?.kuis || cur.ai?.quiz || []).map(s => ({
+  pertanyaan: s.pertanyaan || s.q || s.question || s.soal || "",
+  pilihan: s.pilihan || s.opsi || s.options || s.choices || [],
+jawaban: s.jawaban_benar ?? s.jawabanBenar ?? s.jawaban ?? s.answer ?? s.correct ?? s.kunci ?? 0
+})).filter(s => s.pertanyaan);
           if (!Q.length) {
             c.innerHTML = "<p>Soal kosong, coba upload ulang.</p>";
             return;
@@ -681,7 +814,12 @@ async function logout() {
         }
         if (t === "flash") {
           setActive("mFlash");
-          let F = cur.ai?.flashcard || [];
+         let F = cur.ai?.flashcards || cur.ai?.flashcard || [];
+// Normalisasi isi kartunya, biar apapun nama field dari AI ke-baca
+F = F.map(k => ({
+  q: k.q || k.pertanyaan || k.question || k.front || k.depan || "",
+  a: k.a || k.jawaban || k.answer || k.back || k.belakang || ""
+})).filter(k => k.q);
           if (!F.length) {
             c.innerHTML = "<p>Flashcard kosong.</p>";
             return;
@@ -691,7 +829,7 @@ async function logout() {
           document.getElementById("dProgress").innerText =
             `${flashIdx + 1} / ${total}`;
           c.innerHTML = `<div style="display:flex;gap:8px;justify-content:center"><button>↻ Buat ulang</button><button>⟳ Ulangi</button><button onclick="kelolaFlash()">✎ Kelola</button></div>
-    <div class="flash" onclick="balikFlash()"><small style="color:#888;font-size:13px">${flashBalik ? "Jawaban" : "Pertanyaan"}</small><h2 style="margin:16px 0">${flashBalik ? kartu.belakang : kartu.depan}</h2><p style="color:#999;font-size:13px">${flashBalik ? "Klik untuk balik ke pertanyaan" : "Klik untuk lihat jawaban"}</p></div>
+    <div class="flash" onclick="balikFlash()"><small style="color:#888;font-size:13px">${flashBalik ? "Jawaban" : "Pertanyaan"}</small><h2 style="margin:16px 0">${flashBalik ? kartu.a : kartu.q}</h2><p style="color:#999;font-size:13px">${flashBalik ? "Klik untuk balik ke pertanyaan" : "Klik untuk lihat jawaban"}</p></div>
     ${flashBalik ? `<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:14px"><button style="background:#dc2626;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('lagi')">Lagi<br><small>1</small></button><button style="background:#0284c7;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('sulit')">Sulit<br><small>2</small></button><button style="background:#ff6b00;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('bagus')">Bagus<br><small>3</small></button><button style="background:#16a34a;color:#fff;padding:14px;border:0;border-radius:12px" onclick="nilaiFlash('mudah')">Mudah<br><small>4</small></button></div>` : `<div style="display:flex;justify-content:space-between;margin-top:14px"><button onclick="prevFlash()">← Sebelumnya</button><button onclick="nextFlash()">Berikutnya →</button></div>`}
     <div id="kelolaBox"></div>`;
         }
@@ -714,7 +852,11 @@ async function logout() {
         }
       }
       function nextStep() {
-        let R = cur.ai?.ringkasan || [];
+        let catatanArr2 = cur.ai?.catatan || null;
+let Rraw = catatanArr2 && Array.isArray(catatanArr2) && typeof catatanArr2[0] === 'object' ? catatanArr2.map(x => (x.judul||"") + ": " + (x.isi||"")) : (cur.ai?.ringkasan || cur.ai?.materi || "");
+let R = Array.isArray(Rraw) ? Rraw : kalimatDari(Rraw);
+if (!R.length) R = kalimatDari(cur.text).slice(0, 6);
+R = R.slice(0, 6);
         curStep++;
         if (curStep >= R.length) {
           alert("🎉 Baca selesai! Lanjut ke Mindmap ya!");
@@ -732,9 +874,11 @@ async function logout() {
       }
       function periksaKuis() {
         if (pilihanUser === -1) return alert("Pilih dulu A / B / C / D!");
-        let Q = cur.ai.kuis;
-        let soal = Q[curSoal % Q.length];
-        let raw = soal.jawabanBenar ?? soal.jawaban_benar ?? soal.jawaban;
+        let Qraw = cur.ai.kuis || cur.ai.quiz || [];
+let soalRaw = Qraw[curSoal % Qraw.length];
+let pilihanArr = soalRaw.pilihan || soalRaw.opsi || soalRaw.options || [];
+let soal = { ...soalRaw, pilihan: pilihanArr };
+let raw = soalRaw.jawaban_benar ?? soalRaw.jawabanBenar ?? soalRaw.jawaban;
         let benarIdx;
         if (typeof raw === "number") {
           benarIdx = raw;
