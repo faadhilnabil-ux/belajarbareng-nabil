@@ -814,7 +814,7 @@ jawaban: s.jawaban_benar ?? s.jawabanBenar ?? s.jawaban ?? s.answer ?? s.correct
         }
         if (t === "flash") {
           setActive("mFlash");
-         let F = cur.ai?.flashcards || cur.ai?.flashcard || [];
+        let F = (cur.ai?.flashcards?.length && cur.ai.flashcards[0]?.pertanyaan) ? cur.ai.flashcards : (cur.ai?.flashcard || cur.ai?.flashcards || []);
 // Normalisasi isi kartunya, biar apapun nama field dari AI ke-baca
 F = F.map(k => ({
   q: k.q || k.pertanyaan || k.question || k.front || k.depan || "",
