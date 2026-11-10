@@ -949,7 +949,7 @@ let raw = soalRaw.jawaban_benar ?? soalRaw.jawabanBenar ?? soalRaw.jawaban;
         tab("flash");
       }
       function kelolaFlash() {
-        let F = cur.ai?.flashcard || [];
+        let F = cur.ai?.flashcards || cur.ai?.flashcard || [];
         document.getElementById("kelolaBox").innerHTML =
           `<h3>${F.length} kartu</h3>` +
           F.map(

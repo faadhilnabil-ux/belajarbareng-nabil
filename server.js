@@ -53,7 +53,7 @@ FORMAT JSON YANG HARUS DIKELUARKAN:
       "level": "mudah / menengah / sulit / jebakan"
     }
   ],
-  "flashcard": [ { "depan": "Istilah 1-3 kata", "belakang": "Definisi 1-2 kalimat + contoh" } x 10 kartu ]
+  "flashcards": [ { "depan": "Istilah 1-3 kata", "belakang": "Definisi 1-2 kalimat + contoh" } x 10 kartu ]
 }
 
 ATURAN RINGKASAN:
