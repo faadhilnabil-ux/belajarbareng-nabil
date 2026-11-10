@@ -908,10 +908,10 @@ let raw = soalRaw.jawaban_benar ?? soalRaw.jawabanBenar ?? soalRaw.jawaban;
           document.querySelectorAll(".opt")[pilihanUser].style.background =
             "#fef2f2";
           document.getElementById("fbKuis").innerHTML =
-            `<div style="background:#fef2f2;border:1px solid #fecaca;padding:14px;border-radius:12px"><b>⚠️ Jawaban yang benar: ${["A", "B", "C", "D"][benarIdx]}</b><br>Penjelasan: ${soal.pembahasan || soal.penjelasan}</div>`;
+            `<div style="background:#fef2f2;border:1px solid #fecaca;padding:14px;border-radius:12px"><b>⚠️ Jawaban yang benar: ${["A", "B", "C", "D"][benarIdx]}</b><br>Penjelasan: ${soal.pembahasan || soal.penjelasan || soal.explanation || soal.alasan || soal.reason}</div>`;
         } else {
           document.getElementById("fbKuis").innerHTML =
-            `<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:14px;border-radius:12px"><b>✅ BENAR! Mantap!</b><br>Penjelasan: ${soal.pembahasan || soal.penjelasan}</div>`;
+            `<div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:14px;border-radius:12px"><b>✅ BENAR! Mantap!</b><br>Penjelasan: ${soal.pembahasan || soal.penjelasan || soal.explanation || soal.alasan || soal.reason}</div>`;
         }
         document.getElementById("btnPeriksa").style.display = "none";
         document.getElementById("btnNext").style.display = "block";
