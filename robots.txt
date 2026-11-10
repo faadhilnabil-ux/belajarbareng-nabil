@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://belajarbareng-nabil.vercel.app///sitemap.xml
