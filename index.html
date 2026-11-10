@@ -253,7 +253,7 @@
         }
       }
       /* ===== FIX RESPONSIVE HP - BARU ===== */
-#btnMenu{
+#btnMenu, #btnMenu2{
   display:none;
   font-size:26px;
   background:none;
@@ -261,6 +261,13 @@
   color:white;
   padding:10px;
   cursor:pointer;
+}
+#btnMenu2{
+  position:fixed !important;
+  top:10px; left:10px;
+  z-index:100;
+  background:#111 !important;
+  border-radius:8px;
 }
 @media (max-width: 768px){
   .side{
@@ -273,7 +280,7 @@
     overflow-y:auto;
   }
   .side.buka{ left:0 !important; box-shadow: 5px 0 20px rgba(0,0,0,0.5); }
-  #btnMenu{ display:block !important; }
+  #btnMenu, #btnMenu2{ display:block !important; }
 }
     </style>
   </head>
@@ -376,6 +383,7 @@
 
     <div id="pageDetail" class="hidden">
       <div class="detail">
+        <button id="btnMenu2" onclick="document.querySelector('.side').classList.toggle('buka')">☰</button>
         <div class="side">
           <b style="padding: 0 12px">📚 BelajarBareng</b><br /><br />
           <div onclick="goHome()" style="background: #f3f4f6">← Beranda</div>
