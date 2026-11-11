@@ -85,12 +85,15 @@ if (parsed.kuis) {
     let answer = -1;
     if (typeof jawaban === "number") answer = jawaban;
     else if (typeof jawaban === "string") {
-      const j = jawaban.trim().toLowerCase();
-      const huruf = ["a","b","c","d"].indexOf(j);
-      if (huruf !== -1) answer = huruf;
-      else if (/^[1-4]$/.test(j)) answer = parseInt(j) - 1;
-      else answer = opsi.findIndex(o => String(o).trim().toLowerCase() === j);
-    }
+  const j = jawaban.trim().toLowerCase();
+  const cocok = opsi.findIndex(o => String(o).trim().toLowerCase() === j);
+  if (cocok !== -1) answer = cocok;
+  else {
+    const huruf = ["a","b","c","d"].indexOf(j);
+    if (huruf !== -1) answer = huruf;
+    else if (/^[1-4]$/.test(j)) answer = parseInt(j) - 1;
+  }
+}
     if (answer < 0 || answer >= opsi.length) answer = 0;
     return { pertanyaan, q: pertanyaan, opsi, options: opsi, jawaban_benar: opsi[answer], answer, penjelasan: k.penjelasan || "" };
   });
