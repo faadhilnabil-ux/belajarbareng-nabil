@@ -360,7 +360,7 @@
                 accept=".pdf,.docx,.txt"
                 style="display: none"
             /></label>
-            <button class="pill" onclick="alert('Fitur YouTube nyusul ya!')">
+           <button class="pill" onclick="tambahYouTube()">▶️ YouTube</button>
               ▶️ YouTube
             </button>
             <button
@@ -1001,17 +1001,31 @@ let raw = soalRaw.jawaban_benar ?? soalRaw.jawabanBenar ?? soalRaw.jawaban;
         document.getElementById("aAI").innerText =
           '🤖 Pai: Dari file lo, jawabannya: "' + ketemu + '"';
       }
-      function downloadCatatan() {
-        let R = cur.ai?.ringkasan || [];
-        let txt =
-          `CATATAN - ${cur.title}\n\n` +
-          R.map((k, i) => i + 1 + ". " + k).join("\n");
-        const b = new Blob([txt], { type: "text/plain" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(b);
-        a.download = "Catatan-" + cur.title + ".txt";
-        a.click();
-      }
+      function downloadCatatan(){
+  if(!cur || !cur.text){ alert('Buka dulu materinya, baru Download!'); return; }
+  let R = (cur.ai && cur.ai.ringkasan && cur.ai.ringkasan.length) ? cur.ai.ringkasan : [cur.text.slice(0,2000)];
+  let judul = (cur.title||'Materi').replace(/[\\\/:*?"<>|]/g,'').trim() || 'Materi';
+  let txt = 'CATATAN - ' + judul + '\n\n' + R.map((k,i)=> (i+1)+'. '+k).join('\n') + '\n\n---\n' + cur.text.slice(0,5000);
+  const b = new Blob([txt], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = 'Catatan-' + judul + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function tambahYouTube(){
+  let url = prompt('Tempel link YouTube-nya:');
+  if(!url) return;
+  let m = url.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([A-Za-z0-9_-]{11})/);
+  if(!m){ alert('Link YouTube-nya gak valid!'); return; }
+  let id = m[1];
+  let judul = prompt('Judul materinya:', 'Materi YouTube') || 'Materi YouTube';
+  cur = { title: judul, text: 'Materi video YouTube: https://youtu.be/' + id, ai: { ringkasan: ['Tonton video: https://youtu.be/' + id] }, ytId: id };
+  let box = document.getElementById('hasil') || document.body;
+  box.insertAdjacentHTML('afterbegin', '<div style="margin:12px 0"><iframe width="100%" height="315" src="https://www.youtube.com/embed/'+id+'" frameborder="0" allowfullscreen></iframe><p>Video: '+judul+'</p></div>');
+  alert('Video ditambahkan!');
+}
       function simpanTempel() {
         let arr = JSON.parse(localStorage.getItem("bb_tempel") || "[]");
         arr.push(document.getElementById("tempelTxt").value);
