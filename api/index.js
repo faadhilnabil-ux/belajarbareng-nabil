@@ -14,6 +14,9 @@ export default async function handler(req, res) {
     body.teks ||
     body.teksKetik ||
     body.message ||
+    body.judul ||
+body.title ||
+body.judulManual ||
     "";
   const judul = body.judul || body.title || body.judulManual || text || "";
   if (!text) {
