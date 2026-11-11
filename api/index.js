@@ -76,16 +76,23 @@ try {
   catch { throw err; }
 }
 // AUTO-BENERIN answer dari kata Sila di penjelasan
+// NORMALISASI KUIS - samakan nama field AI ke format frontend
 if (parsed.kuis) {
   parsed.kuis = parsed.kuis.map(k => {
-    let p = (k.penjelasan || "").toLowerCase();
-    let m = p.match(/sila\s*(\d)/);
-    if (m) {
-      let target = "sila " + m[1];
-      let idx = (k.options || []).findIndex(o => o.toLowerCase().includes(target));
-      if (idx !== -1) k.answer = idx;
+    const pertanyaan = k.pertanyaan || k.q || "";
+    const opsi = k.opsi || k.options || [];
+    let jawaban = k.jawaban_benar ?? k.answer ?? k.jawaban ?? null;
+    let answer = -1;
+    if (typeof jawaban === "number") answer = jawaban;
+    else if (typeof jawaban === "string") {
+      const j = jawaban.trim().toLowerCase();
+      const huruf = ["a","b","c","d"].indexOf(j);
+      if (huruf !== -1) answer = huruf;
+      else if (/^[1-4]$/.test(j)) answer = parseInt(j) - 1;
+      else answer = opsi.findIndex(o => String(o).trim().toLowerCase() === j);
     }
-    return k;
+    if (answer < 0 || answer >= opsi.length) answer = 0;
+    return { pertanyaan, q: pertanyaan, opsi, options: opsi, jawaban_benar: opsi[answer], answer, penjelasan: k.penjelasan || "" };
   });
 }
 // Normalisasi biar frontend gak bilang kosong
